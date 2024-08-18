@@ -1,0 +1,273 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% load static %}
+    <header class="py-1">
+        <div class="container px-2 pb-2">
+            <div class="row gx-5 align-items-center">
+                <div class="col-xxl-12 position-relative mt-5"> <!-- "position-relative" sınıfını ekledik -->
+                    <div class="d-flex justify-content-center ">
+                        <div class="position-absolute" style="top: -15px; margin-left: 340px;">
+                            <!-- Özel Anahtar -->
+                            <div class="custom-control custom-switch ml-1 " style="float: right; margin-top: 2px;">
+                                <input type="checkbox" class="custom-control-input" id="customSwitch1">
+                                <label class="custom-control-label" for="customSwitch1"></label>
+                            </div>
+                            <!-- Profil resmini silen buton -->
+                            <span class="badge badge-pill badge-danger"><a id="deleteProfilePicture"><i
+                                    class="bi bi-trash"></i></a></span>
+                            <span class="badge badge-pill badge-success"><a id="openProfilePictureModal"><i
+                                    class="bi bi-person-bounding-box"></i></a></span>
+                        </div>
+                        <div class="profile bg-gradient-primary-to-secondary position-relative shadow">
+                            <img class="profile-img" src="
+                                    {% if request.user.profile.profile_picture %}{{ request.user.profile.profile_picture.url }}{% else %}{% static 'path/to/default/profile_picture.jpg' %}{% endif %}"
+                                 alt="..." style="max-width: 600px; max-height: 700px;">
+                        </div>
+                    </div>
+                    <!-- Profil Resmi Modalı -->
+                    <div class="modal fade" id="profilePictureModal" tabindex="-1" role="dialog"
+                         aria-labelledby="profilePictureModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="profilePictureModalLabel">Profil Resmi
+                                        Ekle/Güncelle</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Profil Resmi Formu -->
+                                    <form id="profilePictureForm" method="post"
+                                          action="{% url 'save_profile_picture' %}" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="profilePicture">Profil Resmi Seçin</label>
+                                            <input type="file" class="form-control-file" id="profilePicture"
+                                                   name="profile_picture">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" id="saveProfilePicture">Kaydet
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center text-xxl-start">
+                        <div class="badge bg-gradient-primary-to-secondary text-white mb-4">
+                            <div class="text-uppercase">Kauniit elämät ovat muistamisen arvoisia..</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <section class="py-5">
+        <div class="container px-5 mb-5">
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Muistoja</span></h1>
+            </div>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        {% for icerik in icerikler %}
+                            <div class="card mb-4 overflow-hidden shadow">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="text-gradient d-inline ml-3">{{ icerik.baslik }}</h5>
+                                    <div class="d-flex">
+                                        <form method="post" action="{% url 'delete_icerik' icerik.id %}"
+                                              onsubmit="return confirm('Bu içeriği silmek istediğinize emin misiniz?');">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm me-2 mt-1"><i
+                                                    class="bi bi-trash"></i></button>
+                                        </form>
+                                        <button type="button"
+                                                class="btn btn-primary btn-sm me-2 mt-1 edit-content-button"
+                                                data-content-id="{{ icerik.id }}"
+                                                data-content-title="{{ icerik.baslik }}"
+                                                data-content-text="{{ icerik.metin }}"><i class="bi bi-pencil"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body shadow {% if icerik.resim and icerik.metin %}image-and-text{% elif icerik.resim and not icerik.metin and not icerik.video %}only-image-and-title{% elif not icerik.resim and icerik.metin %}only-text{% endif %}"
+                                     style="margin-top: -10px;">
+                                    <!-- İçerik içeriği -->
+                                    {% if icerik.resim and icerik.metin %}
+                                        <div class="grid-container">
+                                            <div class="image-container">
+                                                <img class="img-fluid" src="{{ icerik.resim.url }}"
+                                                     alt="{{ icerik.baslik }}"/>
+                                            </div>
+                                            <div class="text-container">
+                                                <p>{{ icerik.metin }}</p>
+                                            </div>
+                                        </div>
+                                    {% elif icerik.resim and not icerik.metin and not icerik.video %}
+                                        <div class="image-container mb-3">
+                                            <img class="img-fluid" src="{{ icerik.resim.url }}"
+                                                 alt="{{ icerik.baslik }}"/>
+                                        </div>
+                                    {% elif not icerik.resim and icerik.metin %}
+                                        <div class="text-container">
+                                            <p>{{ icerik.metin }}</p>
+                                        </div>
+                                    {% endif %}
+                                    {% if icerik.video %}
+                                        <div class="embed-responsive embed-responsive-16by9">
+                                            <video class="embed-responsive-item" controls>
+                                                <source src="{{ icerik.video.url }}" type="video/mp4">
+                                                Tarayıcınız video etiketini desteklemiyor.
+                                            </video>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="bg-light py-5">
+        <div class="container px-5">
+            <div class="row gx-5 justify-content-center">
+                <div class="col-xxl-8">
+                    <div class="text-center my-5">
+                        <h2 class="display-5 fw-bolder"><span class="text-gradient d-inline">Minusta</span></h2>
+                        <p class="lead fw-light mb-4">Kauniit elämät ovat muistamisen arvoisia...</p>
+                        <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit dolorum
+                            itaque qui unde quisquam consequatur autem. Eveniet quasi nobis aliquid cumque officiis sed
+                            rem iure ipsa! Praesentium ratione atque dolorem?</p>
+                        <div class="d-flex justify-content-center fs-2 gap-4">
+                            <a class="text-gradient" href=""><i class="bi bi-twitter"></i></a>
+                            <a class="text-gradient" href=""><i class="bi bi-linkedin"></i></a>
+                            <a class="text-gradient" href=""><i class="bi bi-github"></i></a>
+                        </div>
+                    </div>
+                    <!-- Profil Silme Butonu -->
+                    <form method="post" action="{% url 'profil_delete' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Poista profiili</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- JavaScript -->
+    <script>
+        $(document).ready(function () {
+            // Profil Resmi Modalını Aç
+            $('#openProfilePictureModal').click(function () {
+                $('#profilePictureModal').modal('show');
+            });
+
+            // Profil Resmini Kaydet
+            $('#saveProfilePicture').click(function () {
+                // Form verilerini al
+                var formData = new FormData($('#profilePictureForm')[0]);
+
+                // POST isteği yap
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "save_profile_picture" %}',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        // Başarılı işlem sonrası yapılacak işlemler
+                        $('#profilePictureModal').modal('hide');
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        // Hata durumunda yapılacak işlemler
+                        console.error('Hata:', errorThrown);
+                    }
+                });
+            });
+
+            // Modal kapatılınca formu sıfırla
+            $('#profilePictureModal').on('hide.bs.modal', function (e) {
+                $('#profilePictureForm')[0].reset();
+            });
+
+            // "x" ikonuna tıklandığında modalı kapat
+            $('#profilePictureModal').on('click', '.close', function () {
+                $('#profilePictureModal').modal('hide');
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            // İçerik Ekleme Formu Modalını Aç
+            $('#openContentFormButton').click(function () {
+                $('#contentFormModal').modal('show');
+            });
+
+            // İçerik Düzenleme Butonuna Tıklandığında Modalı Aç
+            $('.edit-content-button').click(function () {
+                var contentId = $(this).data('content-id');
+                var contentTitle = $(this).data('content-title');
+                var contentText = $(this).data('content-text');
+
+                $('#editContentForm #id_baslik').val(contentTitle);
+                $('#editContentForm #id_metin').val(contentText);
+
+                // Formun action'ını güncelle
+                var formUrl = '{% url "edit_icerik" 0 %}'.replace('0', contentId);
+                $('#editContentForm').attr('action', formUrl);
+
+                // Modalı göster
+                $('#contentFormModal').modal('show');
+            });
+        });
+    </script>
+    <script>
+        document.getElementById('deleteProfilePicture').addEventListener('click', function () {
+            console.log("Profil resmini silme butonuna tıklandı.");
+            if (confirm('Profil resmini silmek istediğinizden emin misiniz?')) {
+                // CSRF tokenini al
+                var csrftoken = getCookie('csrftoken');
+
+                // AJAX isteği yap
+                fetch('{% url "delete_profile_picture" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken  // CSRF tokenini başlık olarak ekleyin
+                    },
+                    body: JSON.stringify({})
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Profil resmi başarıyla silindi.');
+                            // İşlem başarılı olduğunda sayfayı yenileyebilirsiniz veya başka bir aksiyon alabilirsiniz
+                            location.reload();
+                        } else {
+                            console.error('Profil resmini silerken bir hata oluştu.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Hata:', error);
+                    });
+            }
+        });
+
+        // CSRF tokeni için cookie'den alma fonksiyonu
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    // İlgili cookie'yi bul
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+{% endblock %}

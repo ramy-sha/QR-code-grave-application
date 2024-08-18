@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% load static %}
+    <!-- jQuery ve Bootstrap CDN bağlantıları -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap 4 CDN bağlantıları -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <header class="py-1">
+        <div class="container px-2 pb-2">
+            <div class="row gx-5 align-items-center">
+                <div class="col-xxl-12">
+                    <!-- Header profile picture-->
+                    <div class="d-flex justify-content-center  ">
+                        <div class="profile bg-gradient-primary-to-secondary">
+                            <img class="profile-img" src="
+                                    {% if request.user.profile.profile_picture %}{{ request.user.profile.profile_picture.url }}{% else %}{% static 'path/to/default/profile_picture.jpg' %}{% endif %}"
+                                 alt="...">
+                        </div>
+                    </div>
+                    <div class="text-center text-xxl-start">
+                        <div class="badge bg-gradient-primary-to-secondary text-white mb-4">
+                            <div class="text-uppercase">Kauniit elämät ovat muistamisen arvoisia..</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <section class="py-lg-2">
+
+        <div class="container px-10 mb-10">
+            <div class="text-center mb-4">
+                <h8 class="display-6 fw-bolder mb-0"><span class="text-gradient d-inline">Muistoja</span></h8>
+            </div>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        {% for icerik in icerikler %}
+                            <div class="card mb-4 overflow-hidden shadow">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="text-gradient d-inline ml-3">{{ icerik.baslik }}</h5>
+
+                                </div>
+
+                                <div class="card-body shadow {% if icerik.resim and icerik.metin %}image-and-text{% elif icerik.resim and not icerik.metin and not icerik.video %}only-image-and-title{% elif not icerik.resim and icerik.metin %}only-text{% endif %}"
+                                     style="margin-top: -10px;">
+                                    <!-- İçerik içeriği -->
+                                    {% if icerik.resim and icerik.metin %}
+                                        <div class="grid-container">
+                                            <div class="image-container">
+                                                <img class="img-fluid" src="{{ icerik.resim.url }}"
+                                                     alt="{{ icerik.baslik }}"/>
+                                            </div>
+                                            <div class="text-container">
+                                                <p>{{ icerik.metin }}</p>
+                                            </div>
+                                        </div>
+                                    {% elif icerik.resim and not icerik.metin and not icerik.video %}
+                                        <div class="image-container mb-3">
+                                            <img class="img-fluid" src="{{ icerik.resim.url }}"
+                                                 alt="{{ icerik.baslik }}"/>
+                                        </div>
+                                    {% elif not icerik.resim and icerik.metin %}
+                                        <div class="text-container">
+                                            <p>{{ icerik.metin }}</p>
+                                        </div>
+                                    {% endif %}
+                                    {% if icerik.video %}
+                                        <div class="embed-responsive embed-responsive-16by9">
+                                            <video class="embed-responsive-item" controls>
+                                                <source src="{{ icerik.video.url }}" type="video/mp4">
+                                                Tarayıcınız video etiketini desteklemiyor.
+                                            </video>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-light py-5">
+        <div class="container px-5">
+            <div class="row gx-5 justify-content-center">
+                <div class="col-xxl-8">
+                    <div class="text-center my-5">
+                        <h2 class="display-5 fw-bolder"><span class="text-gradient d-inline">Minusta</span></h2>
+                        <p class="lead fw-light mb-4">Kauniit elämät ovat muistamisen arvoisia...</p>
+                        <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit dolorum
+                            itaque qui unde quisquam consequatur autem. Eveniet quasi nobis aliquid cumque officiis sed
+                            rem iure ipsa! Praesentium ratione atque dolorem?</p>
+                        <div class="d-flex justify-content-center fs-2 gap-4">
+                            <a class="text-gradient" href="#!"><i class="bi bi-twitter"></i></a>
+                            <a class="text-gradient" href="#!"><i class="bi bi-linkedin"></i></a>
+                            <a class="text-gradient" href="#!"><i class="bi bi-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+
+
+

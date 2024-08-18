@@ -1,0 +1,98 @@
+{% load static %}<!-- Bootstrap CSS -->
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<!-- jQuery ve Popper.js -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
+    <div class="container px-5">
+        <a class="navbar-brand" href="{% url 'index' %}">
+            <img src="{% static 'images/logo.png' %}" alt="Valhalla Logo"  style="height: 40px;">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="text-gradient nav-link" href="{% url 'profil' %}">
+                            <i class="bi bi-person-fill"></i>
+                            {{ user.username }}
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="text-gradient nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="bi bi-gear"></i>
+                            Setting
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item text-gradient" href="{% url 'edit_content' %}">
+                                <i class="bi bi-pencil"></i>
+                                Edit Content
+                            </a>
+                            <a class="dropdown-item text-gradient" href="#" id="openContentFormLink">
+                                <i class="bi bi-plus"></i>
+                                Add Content
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-gradient" href="#">Something else here</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="text-gradient nav-link" href="{% url 'logout_view' %}">
+                            <i class="bi bi-box-arrow-right"></i>
+                            Logout
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="text-gradient nav-link" href="{% url 'login' %}">
+                            <i class="bi bi-box-arrow-in-left"></i>
+                            Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="text-gradient nav-link" href="{% url 'register' %}">
+                            <i class="bi bi-check2-square"></i>
+                            Register
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- İçerik Ekleme Formu Modalı -->
+<div class="modal fade" id="contentFormModal" tabindex="-1" aria-labelledby="contentFormModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="contentFormModalLabel">Add New Content</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editContentForm" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary" id="saveContentButton">Save Content</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        // Dropdown'ları etkinleştir
+        $('.dropdown-toggle').dropdown();
+        // İçerik Ekleme Formu Modalını Aç
+        $('#openContentFormLink').click(function (e) {
+            e.preventDefault(); // Linkin varsayılan tıklama işlevini engelle
+            $('#contentFormModal').modal('show');
+        });
+    });
+</script>

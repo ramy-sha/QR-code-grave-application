@@ -1,0 +1,50 @@
+.nav-link {
+display: flex;
+align-items: center;
+}
+
+.image-container {
+width: 200px; /* Resim genişliğini buradan ayarlayabilirsiniz */
+height: auto; /* Yüksekliği otomatik ayarla */
+}
+
+.project-info {
+flex: 1; /* Metin kutusunu esnek olarak ayarla */
+}
+
+/* styles.css */
+
+.navbar-nav .nav-item i {
+font-size: 15px;
+margin-right: 5px;
+}
+
+.navbar-nav .nav-item i,
+.dropdown-menu .nav-item i {
+font-size: 15px;
+margin-right: 5px;
+}
+
+.card-body.only-image-and-title {
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+}
+
+.card-body.only-image-and-title .image-container {
+width: 100%;
+}
+
+.card-body.only-image-and-title .image-container img {
+width: 100%;
+max-height: 400px; /* Resmin maksimum yüksekliği 200 piksel olacak şekilde ayarlanıyor */
+height: auto;
+}
+
+.image-container img {
+max-width: 100%; /* Resmin maksimum genişliği %100 olacak şekilde ayarlanıyor */
+max-height: 400px; /* Resmin maksimum yüksekliği 200 piksel olacak şekilde ayarlanıyor */
+height: auto; /* Resmin yüksekliği otomatik olarak ayarlanıyor, oranı koruyor */
+}
+

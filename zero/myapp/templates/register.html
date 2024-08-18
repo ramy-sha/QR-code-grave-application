@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+    <section class="py-5">
+        <div class="container px-5">
+            <div class="bg-light rounded-4 py-5 px-4 px-md-5">
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-lg-8 col-xl-6 d-flex justify-content-center">
+                        <h2>Register</h2>
+                    </div>
+                </div>
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-lg-8 col-xl-6 shadow p-4">
+                        <form method="post" class="form-signin">  {% csrf_token %}
+                            {% if form.errors %}
+                                <div class="alert alert-danger">
+                                    <strong>Error!</strong> Please check the form.
+                                    <ul>
+                                        {% for error in form.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                            {% for field in form %}
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label for="{{ field.name }}" class="form-label">{{ field.label }}</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        {{ field }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <button type="submit" class="btn btn-primary mt-3">Register</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
